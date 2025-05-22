@@ -1,0 +1,101 @@
+expression Parámetro1 = #"Archivo de ejemplo" meta [IsParameterQuery=true, BinaryIdentifier=#"Archivo de ejemplo", Type="Binary", IsParameterQueryRequired=true]
+	lineageTag: 9659faaf-919f-49de-8d33-7808b9d2b401
+	queryGroup: 'Transformar archivo de SGSMUESTRA\Consultas auxiliares'
+
+	annotation PBI_ResultType = Binary
+
+expression 'Transformar archivo de ejemplo' =
+		let
+		    Origen = Excel.Workbook(Parámetro1, null, true),
+		    PRO_1_Table = Origen{[Item="PRO_1",Kind="Table"]}[Data]
+		in
+		    PRO_1_Table
+	lineageTag: 8a964391-7d61-4d50-97ff-42c105311096
+	queryGroup: 'Transformar archivo de SGSMUESTRA'
+
+	annotation PBI_ResultType = Table
+
+expression 'Archivo de ejemplo' =
+		let
+		    Origen = Folder.Files("C:\Users\karsen\Desktop\SGSMUESTRA"),
+		    Navegación1 = Origen{0}[Content]
+		in
+		    Navegación1
+	lineageTag: 3bb9f691-b29f-47e6-8b89-c5b10eee21fa
+	queryGroup: 'Transformar archivo de SGSMUESTRA\Consultas auxiliares'
+
+	annotation PBI_ResultType = Binary
+
+expression 'Transformar archivo' =
+		let
+		    Origen = (Parámetro1 as binary) => let
+		    Origen = Excel.Workbook(Parámetro1, null, true),
+		    PRO_1_Table = Origen{[Item="PRO_1",Kind="Table"]}[Data]
+		in
+		    PRO_1_Table
+		in
+		    Origen
+	mAttributes: [ FunctionQueryBinding = "{""exemplarFormulaName"":""Transformar archivo de ejemplo""}" ]
+	lineageTag: 13c557e0-b1df-4293-bf96-40a7708b93bc
+	queryGroup: 'Transformar archivo de SGSMUESTRA\Consultas auxiliares'
+
+	annotation PBI_ResultType = Function
+
+expression Consulta1 =
+		(DateText as text) as date =>
+		let
+		    PaddedText = Text.PadStart(Text.From(DateText), 8, "0"),
+		    Dia = Text.Range(PaddedText, 0, 2),
+		    Mes = Text.Range(PaddedText, 2, 2),
+		    Anio = Text.Range(PaddedText, 4, 4),
+		    FechaFinal = Date.FromText(Dia & "/" & Mes & "/" & Anio)
+		in
+		    FechaFinal
+	lineageTag: 182ebc9f-ca21-419e-8350-bb47be30fcf8
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Function
+
+expression 'Transformar archivo (2)' =
+		let
+		    Origen = (Parámetro1) => let
+		        Origen = Excel.Workbook(Parámetro1, null, true),
+		        PRO_1_Table = Origen{[Item="PRO_1",Kind="Table"]}[Data]
+		    in
+		        PRO_1_Table
+		in
+		    Origen
+	lineageTag: 5b5b87e3-cbea-4686-8a60-a8ed1bf475a2
+
+	annotation PBI_ResultType = Function
+
+expression 'Archivo de ejemplo (2)' =
+		let
+		    Origen = Folder.Files("C:\Users\karsen\Desktop\SGSMUESTRA"),
+		    Navegación1 = Origen{0}[Content]
+		in
+		    Navegación1
+	lineageTag: eb19c27e-fa37-45f1-acd5-899601d3fe2e
+
+	annotation PBI_ResultType = Binary
+
+expression 'Consulta1 (2)' =
+		let
+		    Origen = (DateText as text) as date =>
+		let
+		    PaddedText = Text.PadStart(Text.From(DateText), 8, "0"),
+		    Dia = Text.Range(PaddedText, 0, 2),
+		    Mes = Text.Range(PaddedText, 2, 2),
+		    Anio = Text.Range(PaddedText, 4, 4),
+		    FechaFinal = Date.FromText(Dia & "/" & Mes & "/" & Anio)
+		in
+		    FechaFinal
+		in
+		    Origen
+	lineageTag: b10b066d-39c2-4109-9086-a1a99f0bd786
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Function
+

@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "SGS"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "a70ea6fe-fbb1-41f5-b327-8a7a65bb9f27"
+  }
+}

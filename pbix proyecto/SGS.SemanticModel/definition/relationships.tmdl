@@ -1,0 +1,9 @@
+relationship AutoDetected_38cd2ac5-31fb-4e8c-a715-73755e9250da
+	fromColumn: SGSMUESTRA.CORTE
+	toColumn: CORTE.CORTE
+
+relationship 52162404-4f02-4202-87e9-4c2fb1e67b33
+	joinOnDateBehavior: datePartOnly
+	fromColumn: SGSMUESTRA.FECHA
+	toColumn: LocalDateTable_1336705a-92b5-4736-bc9e-4a86f261509e.Date
+

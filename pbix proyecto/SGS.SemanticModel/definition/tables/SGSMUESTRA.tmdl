@@ -1,0 +1,88 @@
+table SGSMUESTRA
+	lineageTag: ba4db168-f191-46cc-a610-22984c209fa4
+
+	column FECHA
+		dataType: dateTime
+		formatString: dddd\, d "de" mmmm "de" yyyy
+		lineageTag: 082e0a54-490d-4581-be46-20cc26b23d02
+		summarizeBy: none
+		sourceColumn: FECHA
+
+		variation Variación
+			isDefault
+			relationship: 52162404-4f02-4202-87e9-4c2fb1e67b33
+			defaultHierarchy: LocalDateTable_1336705a-92b5-4736-bc9e-4a86f261509e.'Jerarquía de fechas'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column CORTE
+		dataType: int64
+		formatString: 0
+		lineageTag: 3427621c-3742-4f57-ab30-17f93c7564f1
+		summarizeBy: none
+		sourceColumn: CORTE
+
+		annotation SummarizationSetBy = Automatic
+
+	column PUNTO
+		dataType: string
+		lineageTag: 9e606e8f-2066-412c-8f9b-225d31dc91f2
+		summarizeBy: none
+		sourceColumn: PUNTO
+
+		annotation SummarizationSetBy = Automatic
+
+	column VALOR
+		dataType: string
+		lineageTag: 22320f41-a2d7-471c-8054-88dec6b111fa
+		summarizeBy: none
+		sourceColumn: VALOR
+
+		annotation SummarizationSetBy = Automatic
+
+	column VALOR2
+		dataType: int64
+		formatString: 0
+		lineageTag: 39d73f30-2677-4257-b64d-25e713615c5e
+		summarizeBy: sum
+		sourceColumn: VALOR2
+
+		annotation SummarizationSetBy = Automatic
+
+	partition SGSMUESTRA = m
+		mode: import
+		source =
+				let
+				    Origen = Folder.Files("C:\Users\karsen\Desktop\SGSMUESTRA"),
+				    #"Archivos ocultos filtrados1" = Table.SelectRows(Origen, each [Attributes]?[Hidden]? <> true),
+				    #"Invocar función personalizada1" = Table.AddColumn(#"Archivos ocultos filtrados1", "Transformar archivo", each #"Transformar archivo"([Content])),
+				    #"Columnas con nombre cambiado1" = Table.RenameColumns(#"Invocar función personalizada1", {"Name", "Source.Name"}),
+				    #"Otras columnas quitadas1" = Table.SelectColumns(#"Columnas con nombre cambiado1", {"Source.Name", "Transformar archivo"}),
+				    #"Columna de tabla expandida1" = Table.ExpandTableColumn(#"Otras columnas quitadas1", "Transformar archivo", Table.ColumnNames(#"Transformar archivo"(#"Archivo de ejemplo"))),
+				    #"Tipo cambiado" = Table.TransformColumnTypes(#"Columna de tabla expandida1",{{"CORTE", type text}, {"HORA INICIO", type time}, {"HORA FIN", type time}, {"52", type text}, {"55", type text}, {"58", type text}, {"66", type text}, {"89", type text}, {"101", type text}, {"106", type text}, {"49", type text}, {"L1", type text}, {"L2", type text}, {"L3", type text}, {"L4", type text}}),
+				    #"Primeros caracteres extraídos" = Table.TransformColumns(#"Tipo cambiado", {{"Source.Name", each Text.Start(_, 8), type text}}),
+				    #"Columnas con nombre cambiado" = Table.RenameColumns(#"Primeros caracteres extraídos",{{"Source.Name", "FECHA"}}),
+				    #"Función personalizada invocada" = Table.AddColumn(#"Columnas con nombre cambiado", "Consulta1", each Consulta1([FECHA])),
+				    #"Columnas quitadas" = Table.RemoveColumns(#"Función personalizada invocada",{"FECHA"}),
+				    #"Columnas con nombre cambiado2" = Table.RenameColumns(#"Columnas quitadas",{{"Consulta1", "FECHA"}}),
+				    #"Columnas reordenadas" = Table.ReorderColumns(#"Columnas con nombre cambiado2",{"FECHA", "CORTE", "HORA INICIO", "HORA FIN", "52", "55", "58", "66", "89", "101", "106", "49", "L1", "L2", "L3", "L4"}),
+				    #"Otras columnas con anulación de dinamización" = Table.UnpivotOtherColumns(#"Columnas reordenadas", {"HORA FIN", "HORA INICIO", "CORTE", "FECHA"}, "Atributo", "Valor"),
+				    #"Columnas con nombre cambiado3" = Table.RenameColumns(#"Otras columnas con anulación de dinamización",{{"Atributo", "PUNTO"}, {"Valor", "VALOR"}}),
+				    #"Columnas quitadas1" = Table.RemoveColumns(#"Columnas con nombre cambiado3",{"HORA INICIO", "HORA FIN"}),
+				    #"Tipo cambiado1" = Table.TransformColumnTypes(#"Columnas quitadas1",{{"CORTE", Int64.Type}}),
+				    #"Columna duplicada" = Table.DuplicateColumn(#"Tipo cambiado1", "VALOR", "VALOR - Copia"),
+				    #"Valor reemplazado" = Table.ReplaceValue(#"Columna duplicada","✔","1",Replacer.ReplaceText,{"VALOR - Copia"}),
+				    #"Valor reemplazado1" = Table.ReplaceValue(#"Valor reemplazado","❌","0",Replacer.ReplaceText,{"VALOR - Copia"}),
+				    #"Columnas con nombre cambiado4" = Table.RenameColumns(#"Valor reemplazado1",{{"VALOR - Copia", "VALOR2"}}),
+				    #"Tipo cambiado2" = Table.TransformColumnTypes(#"Columnas con nombre cambiado4",{{"VALOR2", Int64.Type}, {"FECHA", type date}})
+				in
+				    #"Tipo cambiado2"
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+
